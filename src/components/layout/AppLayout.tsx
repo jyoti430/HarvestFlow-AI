@@ -18,7 +18,7 @@ const nav = [
   { to: "/impact", label: "Impact", icon: TrendingUp },
 ] as const;
 
-export function AppLayout() {
+export function AppLayout({ children }: { children: ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [now, setNow] = useState(() => new Date());
   useEffect(() => {
@@ -107,7 +107,7 @@ export function AppLayout() {
         </header>
         <main className="flex-1 overflow-auto">
           <div className="p-4 md:p-8 max-w-[1600px] mx-auto w-full">
-            <Outlet />
+            {children}
           </div>
         </main>
       </div>
