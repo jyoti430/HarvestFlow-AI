@@ -1,100 +1,154 @@
-import { ImpactCard } from "@/components/impact/ImpactCard";
-import { ChartCard } from "@/components/impact/ChartCard";
-import { Apple, DollarSign, Leaf, Gauge, Plane } from "lucide-react";
-import { impactCharts } from "@/data/mock";
+import type { ReactNode } from "react";
 import {
+  Area,
+  AreaChart,
   Bar,
   BarChart,
   CartesianGrid,
+  Legend,
   Line,
   LineChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
-  Area,
-  AreaChart,
-  Legend,
 } from "recharts";
+import { Apple, DollarSign, Gauge, Leaf, Plane, type LucideIcon } from "lucide-react";
+import { PageHeader } from "@/components/common/PageHeader";
+import { MetricTile } from "@/components/common/MetricTile";
+import { SectionCard } from "@/components/common/SectionCard";
+import { SectionSkeleton } from "@/components/common/SectionSkeleton";
+import { useImpactOverview } from "@/hooks/useHarvestFlow";
+import { chartAxis, chartColors, chartGrid, chartTooltip } from "@/utils/charts";
+import type { ImpactMetric, SeriesPoint } from "@/types";
 
-const axis = { fontSize: 11, fill: "oklch(0.52 0.02 260)" } as const;
-const grid = "oklch(0.92 0.01 250)";
+const impactIcons: Record<ImpactMetric["icon"], LucideIcon> = {
+  food: Apple,
+  revenue: DollarSign,
+  carbon: Leaf,
+  efficiency: Gauge,
+  export: Plane,
+};
 
 export function Impact() {
+  const { data, isLoading } = useImpactOverview();
+
   return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-xl font-semibold tracking-tight">Impact Overview</h2>
-        <p className="text-sm text-muted-foreground mt-1">
-          Executive summary of value delivered across the perishable supply chain.
-        </p>
-      </div>
+    <div className="space-y-8">
+      <PageHeader
+        title="Impact Overview"
+        subtitle="Executive summary of value delivered across the perishable supply chain."
+      />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-        <ImpactCard icon={Apple} label="Food Saved" value="2,840 t" sub="Year to date" tone="primary" />
-        <ImpactCard icon={DollarSign} label="Revenue Protected" value="$4.12M" sub="+38% vs baseline" tone="primary" />
-        <ImpactCard icon={Leaf} label="Carbon Prevented" value="1,286 t" sub="CO₂ equivalent" tone="primary" />
-        <ImpactCard icon={Gauge} label="Supply Chain Efficiency" value="92%" sub="Composite index" tone="ai" />
-        <ImpactCard icon={Plane} label="Export Readiness" value="87%" sub="EU + GCC lanes" tone="ai" />
-      </div>
+      {isLoading || !data ? (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <SectionSkeleton key={i} />
+          ))}
+        </div>
+      ) : (
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            {data.metrics.map((m) => (
+              <MetricTile
+                key={m.key}
+                icon={impactIcons[m.icon]}
+                label={m.label}
+                value={m.value}
+                sub={m.sub}
+                tone={m.tone}
+              />
+            ))}
+          </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <ChartCard title="Spoilage Reduction" subtitle="Before vs after HarvestFlow AI (%)">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={impactCharts.spoilage} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={grid} />
-              <XAxis dataKey="month" tick={axis} tickLine={false} axisLine={false} />
-              <YAxis tick={axis} tickLine={false} axisLine={false} />
-              <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8 }} />
-              <Legend wrapperStyle={{ fontSize: 11 }} />
-              <Bar dataKey="before" fill="oklch(0.63 0.23 25)" radius={[4, 4, 0, 0]} name="Before" />
-              <Bar dataKey="after" fill="oklch(0.61 0.14 160)" radius={[4, 4, 0, 0]} name="After" />
-            </BarChart>
-          </ResponsiveContainer>
-        </ChartCard>
-
-        <ChartCard title="Revenue Improvement" subtitle="Monthly revenue protected ($K)">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={impactCharts.revenue} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={grid} />
-              <XAxis dataKey="month" tick={axis} tickLine={false} axisLine={false} />
-              <YAxis tick={axis} tickLine={false} axisLine={false} />
-              <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8 }} />
-              <Line type="monotone" dataKey="value" stroke="oklch(0.58 0.19 264)" strokeWidth={2.5} dot={{ r: 3 }} />
-            </LineChart>
-          </ResponsiveContainer>
-        </ChartCard>
-
-        <ChartCard title="Storage Utilization" subtitle="Average % across regional facilities">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={impactCharts.storage} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-              <defs>
-                <linearGradient id="imp-util" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="oklch(0.58 0.19 264)" stopOpacity={0.4} />
-                  <stop offset="100%" stopColor="oklch(0.58 0.19 264)" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={grid} />
-              <XAxis dataKey="month" tick={axis} tickLine={false} axisLine={false} />
-              <YAxis tick={axis} tickLine={false} axisLine={false} domain={[40, 90]} />
-              <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8 }} />
-              <Area type="monotone" dataKey="util" stroke="oklch(0.58 0.19 264)" strokeWidth={2} fill="url(#imp-util)" />
-            </AreaChart>
-          </ResponsiveContainer>
-        </ChartCard>
-
-        <ChartCard title="Carbon Savings" subtitle="Cumulative tons CO₂e prevented">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={impactCharts.carbon} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={grid} />
-              <XAxis dataKey="month" tick={axis} tickLine={false} axisLine={false} />
-              <YAxis tick={axis} tickLine={false} axisLine={false} />
-              <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8 }} />
-              <Bar dataKey="tons" fill="oklch(0.61 0.14 160)" radius={[4, 4, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </ChartCard>
-      </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <ChartCard title="Spoilage Reduction" subtitle="Before vs after HarvestFlow AI (%)">
+              <SpoilageChart data={data.spoilage} />
+            </ChartCard>
+            <ChartCard title="Revenue Improvement" subtitle="Monthly revenue protected ($K)">
+              <RevenueChart data={data.revenue} />
+            </ChartCard>
+            <ChartCard title="Storage Utilization" subtitle="Average % across regional facilities">
+              <StorageUtilChart data={data.storage} />
+            </ChartCard>
+            <ChartCard title="Carbon Savings" subtitle="Cumulative tons CO₂e prevented">
+              <CarbonChart data={data.carbon} />
+            </ChartCard>
+          </div>
+        </>
+      )}
     </div>
+  );
+}
+
+function ChartCard({ title, subtitle, children }: { title: string; subtitle: string; children: ReactNode }) {
+  return (
+    <SectionCard title={title} subtitle={subtitle}>
+      <div className="h-64">{children}</div>
+    </SectionCard>
+  );
+}
+
+function SpoilageChart({ data }: { data: SeriesPoint[] }) {
+  return (
+    <ResponsiveContainer width="100%" height="100%">
+      <BarChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={chartGrid} />
+        <XAxis dataKey="month" tick={chartAxis} tickLine={false} axisLine={false} />
+        <YAxis tick={chartAxis} tickLine={false} axisLine={false} />
+        <Tooltip contentStyle={chartTooltip} />
+        <Legend wrapperStyle={{ fontSize: 11 }} />
+        <Bar dataKey="before" fill={chartColors.critical} radius={[4, 4, 0, 0]} name="Before" />
+        <Bar dataKey="after" fill={chartColors.primary} radius={[4, 4, 0, 0]} name="After" />
+      </BarChart>
+    </ResponsiveContainer>
+  );
+}
+
+function RevenueChart({ data }: { data: SeriesPoint[] }) {
+  return (
+    <ResponsiveContainer width="100%" height="100%">
+      <LineChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={chartGrid} />
+        <XAxis dataKey="month" tick={chartAxis} tickLine={false} axisLine={false} />
+        <YAxis tick={chartAxis} tickLine={false} axisLine={false} />
+        <Tooltip contentStyle={chartTooltip} />
+        <Line type="monotone" dataKey="value" stroke={chartColors.ai} strokeWidth={2.5} dot={{ r: 3 }} />
+      </LineChart>
+    </ResponsiveContainer>
+  );
+}
+
+function StorageUtilChart({ data }: { data: SeriesPoint[] }) {
+  return (
+    <ResponsiveContainer width="100%" height="100%">
+      <AreaChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+        <defs>
+          <linearGradient id="imp-util" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={chartColors.ai} stopOpacity={0.4} />
+            <stop offset="100%" stopColor={chartColors.ai} stopOpacity={0} />
+          </linearGradient>
+        </defs>
+        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={chartGrid} />
+        <XAxis dataKey="month" tick={chartAxis} tickLine={false} axisLine={false} />
+        <YAxis tick={chartAxis} tickLine={false} axisLine={false} domain={[40, 90]} />
+        <Tooltip contentStyle={chartTooltip} />
+        <Area type="monotone" dataKey="util" stroke={chartColors.ai} strokeWidth={2} fill="url(#imp-util)" />
+      </AreaChart>
+    </ResponsiveContainer>
+  );
+}
+
+function CarbonChart({ data }: { data: SeriesPoint[] }) {
+  return (
+    <ResponsiveContainer width="100%" height="100%">
+      <BarChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={chartGrid} />
+        <XAxis dataKey="month" tick={chartAxis} tickLine={false} axisLine={false} />
+        <YAxis tick={chartAxis} tickLine={false} axisLine={false} />
+        <Tooltip contentStyle={chartTooltip} />
+        <Bar dataKey="tons" fill={chartColors.primary} radius={[4, 4, 0, 0]} />
+      </BarChart>
+    </ResponsiveContainer>
   );
 }
