@@ -9,19 +9,14 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as SimulationLabRouteImport } from './routes/simulation-lab'
-import { Route as ImpactRouteImport } from './routes/impact'
-import { Route as DecisionEngineRouteImport } from './routes/decision-engine'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DecisionEngineRouteImport } from './routes/decision-engine'
+import { Route as ImpactRouteImport } from './routes/impact'
+import { Route as SimulationLabRouteImport } from './routes/simulation-lab'
 
-const SimulationLabRoute = SimulationLabRouteImport.update({
-  id: '/simulation-lab',
-  path: '/simulation-lab',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ImpactRoute = ImpactRouteImport.update({
-  id: '/impact',
-  path: '/impact',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DecisionEngineRoute = DecisionEngineRouteImport.update({
@@ -29,9 +24,14 @@ const DecisionEngineRoute = DecisionEngineRouteImport.update({
   path: '/decision-engine',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const ImpactRoute = ImpactRouteImport.update({
+  id: '/impact',
+  path: '/impact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SimulationLabRoute = SimulationLabRouteImport.update({
+  id: '/simulation-lab',
+  path: '/simulation-lab',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -71,18 +71,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/simulation-lab': {
-      id: '/simulation-lab'
-      path: '/simulation-lab'
-      fullPath: '/simulation-lab'
-      preLoaderRoute: typeof SimulationLabRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/impact': {
-      id: '/impact'
-      path: '/impact'
-      fullPath: '/impact'
-      preLoaderRoute: typeof ImpactRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/decision-engine': {
@@ -92,11 +85,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DecisionEngineRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/impact': {
+      id: '/impact'
+      path: '/impact'
+      fullPath: '/impact'
+      preLoaderRoute: typeof ImpactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/simulation-lab': {
+      id: '/simulation-lab'
+      path: '/simulation-lab'
+      fullPath: '/simulation-lab'
+      preLoaderRoute: typeof SimulationLabRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -111,3 +111,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
