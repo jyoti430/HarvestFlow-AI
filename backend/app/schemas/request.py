@@ -27,8 +27,20 @@ class DecisionRequest(BaseModel):
         ..., min_length=1, max_length=200, examples=["Singapore Fresh Produce Hub"]
     )
     harvest_date: date = Field(..., examples=["2026-07-30"])
-    temperature: float = Field(..., ge=-50, le=70, examples=[36])
-    humidity: float = Field(..., ge=0, le=100, examples=[82])
+    temperature: float | None = Field(
+        default=None,
+        ge=-50,
+        le=70,
+        description="Optional manual override; normally populated from live weather.",
+        examples=[36],
+    )
+    humidity: float | None = Field(
+        default=None,
+        ge=0,
+        le=100,
+        description="Optional manual override; normally populated from live weather.",
+        examples=[82],
+    )
     storage_available: bool = Field(..., examples=[False])
     storage_utilization: float = Field(
         default=0,
