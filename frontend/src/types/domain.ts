@@ -72,6 +72,7 @@ export interface DecisionInputs {
 
 export interface DecisionDirective {
   action: string;
+  priority?: "Critical" | "High" | "Medium" | "Low";
   harvestTime: string;
   truck: string;
   storage: string;
