@@ -1,0 +1,25 @@
+# Python
+
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+.venv/
+venv/
+env/
+
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+.env
+
+# Node
+
+node_modules/
+dist/
+
+# OS
+.DS_Store
+Thumbs.db

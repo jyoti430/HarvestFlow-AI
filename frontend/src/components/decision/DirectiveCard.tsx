@@ -8,7 +8,7 @@ import type { DecisionDirective } from "@/types";
 export function DirectiveCard({ directive }: { directive: DecisionDirective }) {
   return (
     <Card className="overflow-hidden shadow-sm">
-      <DirectiveHeader action={directive.action} />
+      <DirectiveHeader action={directive.action} priority={directive.priority} />
       <div className="p-6 space-y-6">
         <DirectiveActions directive={directive} />
         <ConfidenceMeter value={directive.confidence} />

@@ -3,18 +3,25 @@ import { SectionSkeleton } from "@/components/common/SectionSkeleton";
 import { DecisionForm } from "@/components/decision/DecisionForm";
 import { DirectiveCard } from "@/components/decision/DirectiveCard";
 import { DecisionTimeline } from "@/components/decision/DecisionTimeline";
-import { useDefaultDirective } from "@/hooks/useHarvestFlow";
 import type { DecisionInputs } from "@/types";
 import { decisionService } from "@/services";
-import { useQueryClient } from "@tanstack/react-query";
+import type { OptimizeResponse } from "@/services/decisionService";
+import { toast } from "sonner";
+import { useState } from "react";
 
 export function DecisionEngine() {
-  const { data, isLoading } = useDefaultDirective();
-  const queryClient = useQueryClient();
+  const [data, setData] = useState<OptimizeResponse | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleOptimize = async (inputs: DecisionInputs) => {
-    const result = await decisionService.optimize(inputs);
-    queryClient.setQueryData(["decision", "default"], result);
+    setIsLoading(true);
+    try {
+      setData(await decisionService.optimize(inputs));
+    } catch {
+      toast.error("Unable to connect to HarvestFlow backend.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -26,7 +33,7 @@ export function DecisionEngine() {
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
         <div className="lg:col-span-2">
-          <DecisionForm onOptimize={handleOptimize} />
+          <DecisionForm onOptimize={handleOptimize} isLoading={isLoading} />
         </div>
         <div className="lg:col-span-3 space-y-6">
           {isLoading || !data ? (

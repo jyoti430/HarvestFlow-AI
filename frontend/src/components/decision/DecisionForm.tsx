@@ -2,7 +2,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Sparkles } from "lucide-react";
+import { Loader2, Sparkles } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { crops, destinations, origins, storagePreferences } from "@/data";
 import type { DecisionInputs } from "@/types";
@@ -19,7 +19,13 @@ const defaultInputs: DecisionInputs = {
   storagePreference: storagePreferences[0],
 };
 
-export function DecisionForm({ onOptimize }: { onOptimize?: (inputs: DecisionInputs) => void }) {
+export function DecisionForm({
+  onOptimize,
+  isLoading = false,
+}: {
+  onOptimize?: (inputs: DecisionInputs) => Promise<void>;
+  isLoading?: boolean;
+}) {
   const [inputs, setInputs] = useState<DecisionInputs>(defaultInputs);
   const set = <K extends keyof DecisionInputs>(k: K, v: DecisionInputs[K]) =>
     setInputs((s) => ({ ...s, [k]: v }));
@@ -101,9 +107,9 @@ export function DecisionForm({ onOptimize }: { onOptimize?: (inputs: DecisionInp
         </Field>
       </div>
 
-      <Button onClick={() => onOptimize?.(inputs)} className="w-full h-11 gap-2">
-        <Sparkles className="h-4 w-4" />
-        Run AI Optimization
+      <Button onClick={() => void onOptimize?.(inputs)} disabled={isLoading} className="w-full h-11 gap-2">
+        {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+        {isLoading ? "Generating AI Directive..." : "Generate AI Directive"}
       </Button>
     </Card>
   );
