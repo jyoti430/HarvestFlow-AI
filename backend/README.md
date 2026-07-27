@@ -1,8 +1,8 @@
 # HarvestFlow AI Backend
 
 A small FastAPI MVP that turns harvest and logistics inputs into an explainable,
-rule-based operational directive. It deliberately has no LLM, database,
-authentication, or external integrations yet.
+rule-based operational directive. Current temperature and humidity are fetched
+from Open-Meteo using the origin city; no weather API key is needed.
 
 ## Run locally
 
@@ -33,8 +33,6 @@ Example request:
   "origin": "Nashik",
   "target_market": "Singapore Fresh Produce Hub",
   "harvest_date": "2026-07-30",
-  "temperature": 36,
-  "humidity": 82,
   "storage_available": false,
   "truck_delay_hours": 4,
   "market_demand": "High"

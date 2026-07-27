@@ -5,8 +5,10 @@ from fastapi import APIRouter, status
 from app.core.decision_engine import generate_directive
 from app.schemas.request import DecisionRequest
 from app.schemas.response import DecisionResponse, HealthResponse, ServiceResponse
+from app.services.weather_service import WeatherService
 
 router = APIRouter()
+weather_service = WeatherService()
 
 
 @router.get("/", response_model=ServiceResponse, tags=["System"])
@@ -28,6 +30,10 @@ def health_check() -> HealthResponse:
     tags=["Decisions"],
     summary="Generate an operational AI directive",
 )
-def create_decision(request: DecisionRequest) -> DecisionResponse:
-    """Create a rule-based placeholder directive from operational inputs."""
-    return generate_directive(request)
+async def create_decision(request: DecisionRequest) -> DecisionResponse:
+    """Fetch origin weather and generate a deterministic operational directive."""
+    weather = await weather_service.get_current_weather(request.origin)
+    enriched_request = request.model_copy(
+        update={"temperature": weather.temperature, "humidity": weather.humidity}
+    )
+    return generate_directive(enriched_request)
