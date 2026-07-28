@@ -68,6 +68,14 @@ export interface DecisionInputs {
   destination: string;
   harvestDate: string;
   storagePreference: string;
+  storageAvailable: boolean;
+  storageUtilization: number;
+  distanceToStorageKm: number;
+  truckDelayHours: number;
+  travelDistanceKm: number;
+  coldTransportAvailable: boolean;
+  exportPriority: boolean;
+  marketDemand: "High" | "Medium" | "Low";
 }
 
 export interface DecisionDirective {

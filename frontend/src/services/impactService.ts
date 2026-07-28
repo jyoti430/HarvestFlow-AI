@@ -20,7 +20,7 @@ export const impactService = {
   /** GET /impact/overview */
   getOverview(): Promise<ImpactOverview> {
     if (USE_MOCK_DATA) {
-      return apiClient.mock({
+      return Promise.resolve({
         metrics: impactMetrics,
         spoilage: spoilageSeries,
         revenue: revenueSeries,

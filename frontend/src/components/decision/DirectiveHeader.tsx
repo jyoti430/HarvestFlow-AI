@@ -3,10 +3,10 @@ import { Sparkles } from "lucide-react";
 
 export function DirectiveHeader({
   action,
-  priority = "High",
+  priority,
 }: {
   action: string;
-  priority?: "Critical" | "High" | "Medium" | "Low";
+  priority: "Critical" | "High" | "Medium" | "Low";
 }) {
   return (
     <div className="bg-ai text-ai-foreground px-6 py-4 flex items-center gap-3">
@@ -18,7 +18,7 @@ export function DirectiveHeader({
         <div className="text-base font-semibold leading-tight">{action}</div>
       </div>
       <Badge className="bg-white/15 hover:bg-white/15 text-ai-foreground border-0 shrink-0">
-        Priority · {priority}
+        {priority}
       </Badge>
     </div>
   );

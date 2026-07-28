@@ -32,15 +32,15 @@ export const dashboardService = {
   /** GET /dashboard/overview */
   getOverview(): Promise<DashboardOverview> {
     if (USE_MOCK_DATA) {
-      return apiClient.mock({
-        kpis,
-        weather,
-        storage,
-        transport,
-        markets,
-        directives,
-        supplyHealth: supplyChainHealth,
-      });
+        return Promise.resolve({
+            kpis,
+            weather,
+            storage,
+            transport,
+            markets,
+            directives,
+            supplyHealth: supplyChainHealth,
+        });
     }
     return apiClient.get<DashboardOverview>("/dashboard/overview");
   },
