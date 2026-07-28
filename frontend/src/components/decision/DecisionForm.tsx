@@ -2,6 +2,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Loader2, Sparkles } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { crops, destinations, origins, storagePreferences } from "@/data";
@@ -17,6 +18,14 @@ const defaultInputs: DecisionInputs = {
   destination: destinations[0],
   harvestDate: new Date().toISOString().slice(0, 10),
   storagePreference: storagePreferences[0],
+  storageAvailable: true,
+  storageUtilization: 50,
+  distanceToStorageKm: 20,
+  truckDelayHours: 0,
+  travelDistanceKm: 400,
+  coldTransportAvailable: true,
+  exportPriority: true,
+  marketDemand: "High",
 };
 
 export function DecisionForm({
@@ -105,6 +114,75 @@ export function DecisionForm({
             ))}
           </select>
         </Field>
+
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Storage Utilization (%)">
+            <Input
+              type="number"
+              min={0}
+              max={100}
+              value={inputs.storageUtilization}
+              onChange={(e) => set("storageUtilization", Number(e.target.value))}
+            />
+          </Field>
+          <Field label="Distance to Storage (km)">
+            <Input
+              type="number"
+              min={0}
+              value={inputs.distanceToStorageKm}
+              onChange={(e) => set("distanceToStorageKm", Number(e.target.value))}
+            />
+          </Field>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Truck Delay (hours)">
+            <Input
+              type="number"
+              min={0}
+              value={inputs.truckDelayHours}
+              onChange={(e) => set("truckDelayHours", Number(e.target.value))}
+            />
+          </Field>
+          <Field label="Travel Distance (km)">
+            <Input
+              type="number"
+              min={0}
+              value={inputs.travelDistanceKm}
+              onChange={(e) => set("travelDistanceKm", Number(e.target.value))}
+            />
+          </Field>
+        </div>
+
+        <Field label="Market Demand">
+          <select
+            className={selectClass}
+            value={inputs.marketDemand}
+            onChange={(e) => set("marketDemand", e.target.value as DecisionInputs["marketDemand"])}
+          >
+            <option value="High">High</option>
+            <option value="Medium">Medium</option>
+            <option value="Low">Low</option>
+          </select>
+        </Field>
+
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <Toggle
+            label="Cold storage available"
+            checked={inputs.storageAvailable}
+            onCheckedChange={(checked) => set("storageAvailable", checked)}
+          />
+          <Toggle
+            label="Refrigerated transport available"
+            checked={inputs.coldTransportAvailable}
+            onCheckedChange={(checked) => set("coldTransportAvailable", checked)}
+          />
+          <Toggle
+            label="Prioritize export shipment"
+            checked={inputs.exportPriority}
+            onCheckedChange={(checked) => set("exportPriority", checked)}
+          />
+        </div>
       </div>
 
       <Button onClick={() => void onOptimize?.(inputs)} disabled={isLoading} className="w-full h-11 gap-2">
@@ -121,5 +199,22 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
       <Label className="text-xs text-muted-foreground">{label}</Label>
       {children}
     </div>
+  );
+}
+
+function Toggle({
+  label,
+  checked,
+  onCheckedChange,
+}: {
+  label: string;
+  checked: boolean;
+  onCheckedChange: (checked: boolean) => void;
+}) {
+  return (
+    <Label className="flex items-center gap-2 rounded-md border p-3 text-xs font-normal text-foreground cursor-pointer">
+      <Checkbox checked={checked} onCheckedChange={(value) => onCheckedChange(value === true)} />
+      {label}
+    </Label>
   );
 }

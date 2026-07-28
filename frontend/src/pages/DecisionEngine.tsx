@@ -3,6 +3,7 @@ import { SectionSkeleton } from "@/components/common/SectionSkeleton";
 import { DecisionForm } from "@/components/decision/DecisionForm";
 import { DirectiveCard } from "@/components/decision/DirectiveCard";
 import { DecisionTimeline } from "@/components/decision/DecisionTimeline";
+import { Card } from "@/components/ui/card";
 import type { DecisionInputs } from "@/types";
 import { decisionService } from "@/services";
 import type { OptimizeResponse } from "@/services/decisionService";
@@ -36,16 +37,26 @@ export function DecisionEngine() {
           <DecisionForm onOptimize={handleOptimize} isLoading={isLoading} />
         </div>
         <div className="lg:col-span-3 space-y-6">
-          {isLoading || !data ? (
+          {isLoading ? (
             <>
               <SectionSkeleton rows={6} />
               <SectionSkeleton rows={5} />
             </>
-          ) : (
+          ) : data ? (
             <>
               <DirectiveCard directive={data.directive} />
               <DecisionTimeline steps={data.timeline} />
             </>
+          ) : (
+            <Card className="flex min-h-64 items-center justify-center p-6 text-center shadow-sm">
+              <div className="max-w-md space-y-2">
+                <p className="text-sm font-semibold">No AI directive generated yet.</p>
+                <p className="text-sm text-muted-foreground">
+                  Fill the form and click &apos;Generate AI Directive&apos; to receive an operational
+                  recommendation.
+                </p>
+              </div>
+            </Card>
           )}
         </div>
       </div>

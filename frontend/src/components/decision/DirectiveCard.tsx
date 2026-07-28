@@ -5,7 +5,11 @@ import { DirectiveActions } from "./DirectiveActions";
 import { DirectiveImpact } from "./DirectiveImpact";
 import type { DecisionDirective } from "@/types";
 
-export function DirectiveCard({ directive }: { directive: DecisionDirective }) {
+type BackendDirective = DecisionDirective & {
+  priority: "Critical" | "High" | "Medium" | "Low";
+};
+
+export function DirectiveCard({ directive }: { directive: BackendDirective }) {
   return (
     <Card className="overflow-hidden shadow-sm">
       <DirectiveHeader action={directive.action} priority={directive.priority} />

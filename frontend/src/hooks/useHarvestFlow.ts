@@ -9,13 +9,6 @@ export function useDashboardOverview() {
   });
 }
 
-export function useDefaultDirective() {
-  return useQuery({
-    queryKey: ["decision", "default"],
-    queryFn: () => decisionService.getDefault(),
-  });
-}
-
 export function useOptimizeDirective(inputs: DecisionInputs | null) {
   return useQuery({
     queryKey: ["decision", "optimize", inputs],

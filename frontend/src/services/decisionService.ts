@@ -2,7 +2,9 @@ import { apiClient } from "./apiClient";
 import type { DecisionDirective, DecisionInputs, TimelineStep } from "@/types";
 
 export interface OptimizeResponse {
-  directive: DecisionDirective;
+  directive: DecisionDirective & {
+    priority: "Critical" | "High" | "Medium" | "Low";
+  };
   timeline: TimelineStep[];
 }
 
@@ -30,13 +32,17 @@ interface BackendDecisionRequest {
   target_market: string;
   harvest_date: string;
   storage_available: boolean;
+  storage_utilization: number;
+  distance_to_storage_km: number;
   truck_delay_hours: number;
+  travel_distance_km: number;
+  cold_transport_available: boolean;
+  export_priority: boolean;
   market_demand: "High" | "Medium" | "Low";
 }
 
 /** Convert the unchanged decision form values into the backend API contract. */
 function toBackendRequest(inputs: DecisionInputs): BackendDecisionRequest {
-  const isExportMarket = /export|air freight|rotterdam|dubai/i.test(inputs.destination);
   return {
     crop: inputs.crop,
     quantity: inputs.quantity,
@@ -44,9 +50,14 @@ function toBackendRequest(inputs: DecisionInputs): BackendDecisionRequest {
     origin: inputs.origin,
     target_market: inputs.destination,
     harvest_date: inputs.harvestDate,
-    storage_available: inputs.storagePreference !== "Auto-assign (recommended)",
-    truck_delay_hours: 0,
-    market_demand: isExportMarket ? "High" : "Medium",
+    storage_available: inputs.storageAvailable,
+    storage_utilization: inputs.storageUtilization,
+    distance_to_storage_km: inputs.distanceToStorageKm,
+    truck_delay_hours: inputs.truckDelayHours,
+    travel_distance_km: inputs.travelDistanceKm,
+    cold_transport_available: inputs.coldTransportAvailable,
+    export_priority: inputs.exportPriority,
+    market_demand: inputs.marketDemand,
   };
 }
 

@@ -6,7 +6,9 @@ export const simulationService = {
   /** POST /simulation/run */
   run(scenario: SimulationScenario): Promise<SimulationResult> {
     if (USE_MOCK_DATA) {
-      return apiClient.mock(runSimulation(scenario), 120);
+      return new Promise((resolve) =>
+        setTimeout(() => resolve(runSimulation(scenario)), 120)
+      );
     }
     return apiClient.post<SimulationResult, SimulationScenario>("/simulation/run", scenario);
   },

@@ -1,9 +1,16 @@
 export const crops = ["Tomatoes", "Mangoes", "Avocados", "French Beans", "Leafy Greens", "Onions", "Bananas"] as const;
-export const origins = ["Nakuru", "Machakos", "Muranga", "Kirinyaga", "Kajiado", "Meru"] as const;
-export const destinations = ["Nairobi Wholesale", "Mombasa Export", "JKIA Air Freight", "Rotterdam EU", "Dubai Reefer"] as const;
+export const origins = ["Nashik", "Pune", "Bengaluru", "Hyderabad", "Chennai", "Coimbatore", "Lucknow"] as const;
+export const destinations = [
+  "Singapore Fresh Produce Hub",
+  "Jurong Food Hub",
+  "Changi Cold Logistics",
+  "Mumbai APMC",
+  "Delhi Azadpur Mandi",
+  "Chennai Koyambedu Market",
+] as const;
 export const storagePreferences = [
   "Auto-assign (recommended)",
-  "Nairobi Cold Hub A",
-  "Mombasa Reefer Yard",
-  "Nakuru Packhouse",
+  "Nashik Cold Storage Hub",
+  "Pune Reefer Yard",
+  "Chennai Packhouse",
 ] as const;
