@@ -7,7 +7,7 @@ const riskTone: Record<Risk, Tone> = { low: "primary", moderate: "warning", high
 
 export function WeatherCard({ items }: { items: WeatherReading[] }) {
   return (
-    <SectionCard title="Regional Weather" subtitle="24-hour outlook by source region">
+    <SectionCard title="Regional Weather" subtitle="Live weather across major export hubs">
       <div className="space-y-3">
         {items.map((w) => (
           <WeatherRow key={w.region} reading={w} />

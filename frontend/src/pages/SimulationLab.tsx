@@ -14,7 +14,7 @@ export function SimulationLab() {
   return (
     <div className="space-y-8">
       <PageHeader
-        title="Simulation Lab"
+        title="Live Scenario Simulation"
         subtitle="Test operational scenarios. The AI directive rebalances against your constraints."
       />
 

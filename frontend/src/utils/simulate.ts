@@ -22,21 +22,34 @@ export function runSimulation(s: SimulationScenario): SimulationResult {
     stress > 30
       ? "Delay harvest 24h, pre-cool at packhouse, hold market entry"
       : stress > 10
-      ? "Split shipment, dispatch reefer TR-118, prioritize domestic channel"
-      : "Harvest at dawn, dispatch reefer TR-118, route to premium export lane";
+      ? "Split shipment, dispatch reefer Container RF-118, prioritize domestic channel"
+      : "Prioritize export shipment through JNPT Port";
 
   const market =
     s.marketDemand > 75
-      ? "Nairobi Wholesale · Grade A"
+      ? "Singapore Fresh Produce Hub"
       : s.marketDemand > 50
       ? "Mombasa Export · Reefer"
       : "Regional Processor · Volume";
 
+  let priority: "Critical" | "High" | "Medium" | "Low";
+
+  if (confidence >= 95) {
+    priority = "Critical";
+  } else if (confidence >= 90) {
+    priority = "High";
+  } else if (confidence >= 75) {
+    priority = "Medium";
+  } else {
+    priority = "Low";
+  }
+
   return {
     action,
+    priority,
     harvestTime: s.temperature > 28 ? "Tomorrow 04:30 – 06:00" : "Tomorrow 05:30 – 07:00",
-    truck: s.truckDelay > 90 ? "TR-121 · Reefer 14t · 2°C (rerouted)" : "TR-118 · Reefer 14t · 2°C",
-    storage: s.storageAvail > 40 ? "Nairobi Cold Hub A · Bay 04" : "Nakuru Packhouse · Bay 02",
+    truck: s.truckDelay > 90 ? "Container RF-121 · Reefer 14t · 2°C (rerouted)" : "Container RF-118 · Reefer 14t · 2°C",
+    storage: s.storageAvail > 40 ? "Nashik Cold Storage Hub · Bay 04" : "Nakuru Packhouse · Bay 02",
     market,
     confidence,
     revenue: `+$${(expectedRevenue * 1000).toLocaleString()}`,
