@@ -3,12 +3,15 @@
 from fastapi import APIRouter, status
 
 from app.core.decision_engine import generate_directive
+from app.schemas.dashboard import DashboardOverviewResponse
 from app.schemas.request import DecisionRequest
 from app.schemas.response import DecisionResponse, HealthResponse, ServiceResponse
+from app.services.dashboard_service import DashboardService
 from app.services.weather_service import WeatherService
 
 router = APIRouter()
 weather_service = WeatherService()
+dashboard_service = DashboardService()
 
 
 @router.get("/", response_model=ServiceResponse, tags=["System"])
@@ -21,6 +24,17 @@ def root() -> ServiceResponse:
 def health_check() -> HealthResponse:
     """Confirm that the API process is available."""
     return HealthResponse()
+
+
+@router.get(
+    "/api/v1/dashboard/overview",
+    response_model=DashboardOverviewResponse,
+    tags=["Dashboard"],
+    summary="Get dashboard overview data",
+)
+def get_dashboard_overview() -> DashboardOverviewResponse:
+    """Return deterministic India-Singapore dashboard data for the MVP."""
+    return dashboard_service.get_overview()
 
 
 @router.post(
