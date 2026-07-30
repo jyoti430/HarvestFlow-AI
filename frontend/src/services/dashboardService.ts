@@ -1,13 +1,4 @@
-import { apiClient, USE_MOCK_DATA } from "./apiClient";
-import {
-  kpis,
-  weather,
-  storage,
-  transport,
-  markets,
-  directives,
-  supplyChainHealth,
-} from "@/data";
+import { apiClient } from "./apiClient";
 import type {
   Directive,
   HealthPoint,
@@ -29,19 +20,8 @@ export interface DashboardOverview {
 }
 
 export const dashboardService = {
-  /** GET /dashboard/overview */
+  /** GET /api/v1/dashboard/overview */
   getOverview(): Promise<DashboardOverview> {
-    if (USE_MOCK_DATA) {
-        return Promise.resolve({
-            kpis,
-            weather,
-            storage,
-            transport,
-            markets,
-            directives,
-            supplyHealth: supplyChainHealth,
-        });
-    }
-    return apiClient.get<DashboardOverview>("/dashboard/overview");
+    return apiClient.get<DashboardOverview>("/api/v1/dashboard/overview");
   },
 };
