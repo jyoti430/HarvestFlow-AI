@@ -1,11 +1,16 @@
-"""Open-Meteo weather integration with resilient fallback behaviour."""
+"""Weather integrations with resilient fallback behaviour."""
 
+import asyncio
+import os
+import time
 from typing import Any
 
 import httpx
 from pydantic import BaseModel, Field, ValidationError
 
 from app.utils.constants import FALLBACK_HUMIDITY, FALLBACK_TEMPERATURE
+from app.data.dashboard_data import DASHBOARD_WEATHER_FALLBACK
+from app.schemas.dashboard import WeatherReadingResponse
 
 
 class WeatherData(BaseModel):
@@ -73,3 +78,97 @@ class WeatherService:
             weather_code=0,
             is_fallback=True,
         )
+
+
+class DashboardWeatherService:
+    """Fetch and cache dashboard weather from OpenWeather with safe fallbacks."""
+
+    forecast_url = "https://api.openweathermap.org/data/2.5/forecast"
+    timeout_seconds = 5.0
+    cache_ttl_seconds = 300
+
+    def __init__(self, api_key: str | None = None) -> None:
+        """Create the service using the configured OpenWeather API key."""
+        self.api_key = api_key if api_key is not None else os.getenv("OPENWEATHER_API_KEY")
+        self._cache: dict[str, tuple[float, WeatherReadingResponse]] = {}
+
+    async def get_regional_weather(self) -> list[WeatherReadingResponse]:
+        """Return live weather for all dashboard cities, falling back per city."""
+        fallback_by_city = {
+            item["region"]: WeatherReadingResponse.model_validate(item)
+            for item in DASHBOARD_WEATHER_FALLBACK
+        }
+        return list(
+            await asyncio.gather(
+                *(self._get_city_weather(city, fallback) for city, fallback in fallback_by_city.items())
+            )
+        )
+
+    async def _get_city_weather(
+        self, city: str, fallback: WeatherReadingResponse
+    ) -> WeatherReadingResponse:
+        """Fetch one city weather reading or return its deterministic fallback."""
+        cached = self._cache.get(city)
+        if cached is not None and time.monotonic() - cached[0] < self.cache_ttl_seconds:
+            return cached[1]
+
+        if not self.api_key:
+            self._cache[city] = (time.monotonic(), fallback)
+            return fallback
+
+        try:
+            async with httpx.AsyncClient(timeout=self.timeout_seconds) as client:
+                response = await client.get(
+                    self.forecast_url,
+                    params={"q": city, "appid": self.api_key, "units": "metric"},
+                )
+                response.raise_for_status()
+                reading = self._parse_dashboard_weather(city, response.json())
+        except (httpx.HTTPError, KeyError, IndexError, TypeError, ValueError, ValidationError):
+            reading = fallback
+
+        self._cache[city] = (time.monotonic(), reading)
+        return reading
+
+    @staticmethod
+    def _parse_dashboard_weather(city: str, payload: dict[str, Any]) -> WeatherReadingResponse:
+        """Map the first OpenWeather forecast interval to the dashboard contract."""
+        forecast = payload["list"][0]
+        temperature = round(float(forecast["main"]["temp"]), 1)
+        humidity = DashboardWeatherService._clamp_percentage(forecast["main"]["humidity"])
+        rain_probability = DashboardWeatherService._clamp_percentage(
+            float(forecast.get("pop", 0)) * 100
+        )
+        risk = DashboardWeatherService._risk_for(temperature, humidity, rain_probability)
+        return WeatherReadingResponse(
+            region=city,
+            temp=temperature,
+            humidity=humidity,
+            rain=rain_probability,
+            risk=risk,
+        )
+
+    @staticmethod
+    def _risk_for(temperature: float, humidity: int, rain_probability: int) -> str:
+        """Classify risk by evaluating combined temperature, humidity, and rain signals."""
+        high_signals = (
+            rain_probability >= 70,
+            temperature >= 35,
+            humidity >= 85,
+        )
+        moderate_signals = (
+            40 <= rain_probability <= 69,
+            28 <= temperature <= 34,
+            70 <= humidity <= 84,
+        )
+
+        if any(high_signals):
+            return "high"
+        if any(moderate_signals):
+            return "moderate"
+        return "low"
+
+    @staticmethod
+    def _clamp_percentage(value: float | int) -> int:
+        """Round a percentage to a whole number within the dashboard range."""
+        return max(0, min(100, round(float(value))))

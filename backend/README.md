@@ -2,7 +2,8 @@
 
 A small FastAPI MVP that turns harvest and logistics inputs into an explainable,
 rule-based operational directive. Current temperature and humidity are fetched
-from Open-Meteo using the origin city; no weather API key is needed.
+from Open-Meteo using the origin city. The dashboard can additionally fetch
+live regional weather from OpenWeather when an API key is configured.
 
 ## Run locally
 
@@ -16,6 +17,14 @@ uvicorn app.main:app --reload
 
 The API is available at `http://127.0.0.1:8000`. Interactive Swagger
 documentation is available at `http://127.0.0.1:8000/docs`.
+
+## Live dashboard weather
+
+Copy `.env.example` to `.env` and set `OPENWEATHER_API_KEY` to an OpenWeather
+API key. The dashboard fetches Nashik, Pune, Bengaluru, and Hyderabad weather
+and caches each reading in memory for five minutes. If the key is not set or
+the provider is unavailable, the API automatically returns deterministic MVP
+weather values instead.
 
 ## Endpoints
 
