@@ -1,5 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { LayoutDashboard, BrainCircuit, FlaskConical, TrendingUp, Sparkles, type LucideIcon } from "lucide-react";
+import { useBackendHealth } from "@/hooks/useHarvestFlow";
 
 interface NavItem {
   to: string;
@@ -16,6 +17,12 @@ const nav: readonly NavItem[] = [
 
 export function Sidebar() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const { data, isError, isLoading } = useBackendHealth();
+  const systemStatus = isLoading
+    ? { label: "Checking...", indicatorClass: "bg-muted-foreground/60 animate-pulse" }
+    : isError || data?.status !== "healthy"
+      ? { label: "Backend Offline", indicatorClass: "bg-red-500" }
+      : { label: "Operational", indicatorClass: "bg-emerald-500" };
 
   return (
     <aside className="hidden md:flex w-64 shrink-0 flex-col bg-sidebar text-sidebar-foreground">
@@ -41,8 +48,8 @@ export function Sidebar() {
         <div className="flex items-center justify-between">
           <span>System status</span>
           <span className="flex items-center gap-1.5">
-            <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
-            Operational
+            <span className={`h-1.5 w-1.5 rounded-full ${systemStatus.indicatorClass}`} />
+            {systemStatus.label}
           </span>
         </div>
       </div>
