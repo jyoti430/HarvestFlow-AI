@@ -1,11 +1,11 @@
 import type { ImpactMetric, SeriesPoint } from "@/types";
 
 export const impactMetrics: ImpactMetric[] = [
-  { key: "food", icon: "food", label: "Food Saved", value: "2,840 t", sub: "Year to date", tone: "primary" },
-  { key: "revenue", icon: "revenue", label: "Revenue Protected", value: "$4.12M", sub: "+38% vs baseline", tone: "primary" },
+  { key: "food", icon: "food", label: "Produce Saved", value: "2,840 t", sub: "Year to date", tone: "primary" },
+  { key: "revenue", icon: "revenue", label: "Export Revenue Protected", value: "$4.12M", sub: "+38% vs baseline", tone: "primary" },
   { key: "carbon", icon: "carbon", label: "Carbon Prevented", value: "1,286 t", sub: "CO₂ equivalent", tone: "primary" },
   { key: "efficiency", icon: "efficiency", label: "Supply Chain Efficiency", value: "92%", sub: "Composite index", tone: "ai" },
-  { key: "export", icon: "export", label: "Export Readiness", value: "87%", sub: "EU + GCC lanes", tone: "ai" },
+  { key: "export", icon: "export", label: "Export Readiness", value: "87%", sub: "Export Readiness Score", tone: "ai" },
 ];
 
 export const spoilageSeries: SeriesPoint[] = [

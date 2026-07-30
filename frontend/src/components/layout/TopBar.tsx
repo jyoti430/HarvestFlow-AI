@@ -1,7 +1,7 @@
 import { Cloud, MapPin } from "lucide-react";
 import { useEffect, useState } from "react";
 
-const REGIONS = ["All Regions", "Nakuru", "Machakos", "Muranga", "Kirinyaga"] as const;
+const REGIONS = ["All Regions", "Nashik", "Pune", "Bengaluru", "Hyderabad"] as const;
 
 export function TopBar() {
   const [now, setNow] = useState(() => new Date());

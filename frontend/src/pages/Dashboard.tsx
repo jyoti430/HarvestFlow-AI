@@ -15,7 +15,7 @@ export function Dashboard() {
   return (
     <div className="space-y-8">
       <PageHeader
-        title="Regional Operations Overview"
+        title="Export Supply Chain Overview"
         subtitle="Live view across weather, storage, transport and markets. Directives update every 5 minutes."
       />
 

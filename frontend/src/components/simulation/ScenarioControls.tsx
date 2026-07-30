@@ -56,10 +56,6 @@ export function ScenarioControls({
       ))}
 
       <div className="flex gap-2 pt-2">
-        <Button onClick={onRun} className="flex-1 gap-2">
-          <Play className="h-4 w-4" />
-          Run Simulation
-        </Button>
         <Button variant="outline" onClick={onReset} className="gap-2">
           <RefreshCw className="h-4 w-4" />
           Reset
