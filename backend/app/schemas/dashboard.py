@@ -21,8 +21,8 @@ class WeatherReadingResponse(BaseModel):
 
     region: str
     temp: float = Field(..., ge=-50, le=70)
-    humidity: float = Field(..., ge=0, le=100)
-    rain: float = Field(..., ge=0, le=100)
+    humidity: int = Field(..., ge=0, le=100)
+    rain: int = Field(..., ge=0, le=100)
     risk: Literal["low", "moderate", "high"]
 
 

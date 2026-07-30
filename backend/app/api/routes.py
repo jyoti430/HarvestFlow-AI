@@ -38,9 +38,9 @@ def health_check() -> HealthResponse:
     tags=["Dashboard"],
     summary="Get dashboard overview data",
 )
-def get_dashboard_overview() -> DashboardOverviewResponse:
+async def get_dashboard_overview() -> DashboardOverviewResponse:
     """Return deterministic India-Singapore dashboard data for the MVP."""
-    return dashboard_service.get_overview()
+    return await dashboard_service.get_overview()
 
 
 @router.get(

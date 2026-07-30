@@ -1,5 +1,13 @@
 """India and Singapore focused mock data for the dashboard overview."""
 
+DASHBOARD_WEATHER_FALLBACK = [
+    {"region": "Nashik", "temp": 31, "humidity": 58, "rain": 10, "risk": "moderate"},
+    {"region": "Pune", "temp": 29, "humidity": 62, "rain": 20, "risk": "moderate"},
+    {"region": "Bengaluru", "temp": 25, "humidity": 74, "rain": 45, "risk": "high"},
+    {"region": "Hyderabad", "temp": 32, "humidity": 55, "rain": 15, "risk": "moderate"},
+]
+
+
 DASHBOARD_OVERVIEW_DATA = {
     "kpis": [
         {"key": "risk", "label": "Produce at Risk", "value": "1,284 t", "delta": "-8.2%", "trend": "down", "tone": "warning"},
@@ -7,12 +15,7 @@ DASHBOARD_OVERVIEW_DATA = {
         {"key": "storage", "label": "Cold Storage Capacity", "value": "72%", "delta": "+3.1%", "trend": "up", "tone": "primary"},
         {"key": "revenue", "label": "Export Revenue Protected", "value": "$412K", "delta": "+12.4%", "trend": "up", "tone": "primary"},
     ],
-    "weather": [
-        {"region": "Nashik", "temp": 31, "humidity": 58, "rain": 10, "risk": "moderate"},
-        {"region": "Pune", "temp": 29, "humidity": 62, "rain": 20, "risk": "moderate"},
-        {"region": "Bengaluru", "temp": 25, "humidity": 74, "rain": 45, "risk": "high"},
-        {"region": "Chennai", "temp": 33, "humidity": 76, "rain": 25, "risk": "high"},
-    ],
+    "weather": DASHBOARD_WEATHER_FALLBACK,
     "storage": [
         {"facility": "Nashik Cold Storage Hub", "capacity": 1200, "used": 864, "temp": 4},
         {"facility": "JNPT Reefer Terminal", "capacity": 800, "used": 512, "temp": 2},
