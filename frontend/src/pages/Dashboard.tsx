@@ -7,10 +7,11 @@ import { TransportCard } from "@/components/dashboard/TransportCard";
 import { MarketCard } from "@/components/dashboard/MarketCard";
 import { DirectivesFeed } from "@/components/dashboard/DirectivesFeed";
 import { SupplyHealthChart } from "@/components/dashboard/SupplyHealthChart";
+import { BackendErrorCard } from "@/components/common/BackendErrorCard";
 import { useDashboardOverview } from "@/hooks/useHarvestFlow";
 
 export function Dashboard() {
-  const { data, isLoading } = useDashboardOverview();
+  const { data, isLoading, isError, refetch } = useDashboardOverview();
 
   return (
     <div className="space-y-8">
@@ -19,8 +20,10 @@ export function Dashboard() {
         subtitle="Live view across weather, storage, transport and markets. Directives update every 5 minutes."
       />
 
-      {isLoading || !data ? (
+      {isLoading ? (
         <DashboardSkeleton />
+      ) : isError || !data ? (
+        <BackendErrorCard onRetry={() => void refetch()} />
       ) : (
         <>
           <KpiGrid items={data.kpis} />
@@ -45,14 +48,6 @@ export function Dashboard() {
 }
 
 function DashboardSkeleton() {
-
-  const { data, isLoading, error } = useDashboardOverview();
-
-console.log({
-  isLoading,
-  data,
-  error,
-});
   return (
     <>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

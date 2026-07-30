@@ -3,23 +3,28 @@ import { SectionSkeleton } from "@/components/common/SectionSkeleton";
 import { DecisionForm } from "@/components/decision/DecisionForm";
 import { DirectiveCard } from "@/components/decision/DirectiveCard";
 import { DecisionTimeline } from "@/components/decision/DecisionTimeline";
+import { BackendErrorCard } from "@/components/common/BackendErrorCard";
 import { Card } from "@/components/ui/card";
 import type { DecisionInputs } from "@/types";
 import { decisionService } from "@/services";
 import type { OptimizeResponse } from "@/services/decisionService";
-import { toast } from "sonner";
 import { useState } from "react";
 
 export function DecisionEngine() {
   const [data, setData] = useState<OptimizeResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [hasError, setHasError] = useState(false);
+  const [lastInputs, setLastInputs] = useState<DecisionInputs | null>(null);
 
   const handleOptimize = async (inputs: DecisionInputs) => {
     setIsLoading(true);
+    setHasError(false);
+    setLastInputs(inputs);
     try {
       setData(await decisionService.optimize(inputs));
     } catch {
-      toast.error("Unable to connect to HarvestFlow backend.");
+      setData(null);
+      setHasError(true);
     } finally {
       setIsLoading(false);
     }
@@ -42,6 +47,8 @@ export function DecisionEngine() {
               <SectionSkeleton rows={6} />
               <SectionSkeleton rows={5} />
             </>
+          ) : hasError && lastInputs ? (
+            <BackendErrorCard onRetry={() => void handleOptimize(lastInputs)} />
           ) : data ? (
             <>
               <DirectiveCard directive={data.directive} />

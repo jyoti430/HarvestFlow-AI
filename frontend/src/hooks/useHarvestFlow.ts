@@ -1,11 +1,27 @@
 import { useQuery } from "@tanstack/react-query";
-import { dashboardService, decisionService, impactService, simulationService } from "@/services";
+import {
+  dashboardService,
+  decisionService,
+  healthService,
+  impactService,
+  simulationService,
+} from "@/services";
 import type { DecisionInputs, SimulationScenario } from "@/types";
 
 export function useDashboardOverview() {
   return useQuery({
     queryKey: ["dashboard", "overview"],
     queryFn: () => dashboardService.getOverview(),
+  });
+}
+
+export function useBackendHealth() {
+  return useQuery({
+    queryKey: ["backend", "health"],
+    queryFn: () => healthService.check(),
+    refetchInterval: 30_000,
+    refetchOnWindowFocus: false,
+    retry: false,
   });
 }
 

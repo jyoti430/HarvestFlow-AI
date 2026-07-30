@@ -3,13 +3,15 @@ import { PageHeader } from "@/components/common/PageHeader";
 import { ScenarioControls } from "@/components/simulation/ScenarioControls";
 import { SimulationMetrics } from "@/components/simulation/SimulationMetrics";
 import { DirectiveCard } from "@/components/decision/DirectiveCard";
+import { BackendErrorCard } from "@/components/common/BackendErrorCard";
+import { SectionSkeleton } from "@/components/common/SectionSkeleton";
 import { defaultScenario } from "@/data";
 import { useSimulation } from "@/hooks/useHarvestFlow";
 import type { SimulationScenario } from "@/types";
 
 export function SimulationLab() {
   const [scenario, setScenario] = useState<SimulationScenario>(defaultScenario);
-  const { data: result, refetch } = useSimulation(scenario);
+  const { data: result, isLoading, isError, refetch } = useSimulation(scenario);
 
   return (
     <div className="space-y-8">
@@ -28,7 +30,14 @@ export function SimulationLab() {
           />
         </div>
         <div className="lg:col-span-3 space-y-6">
-          {result && (
+          {isLoading ? (
+            <>
+              <SectionSkeleton rows={6} />
+              <SectionSkeleton rows={4} />
+            </>
+          ) : isError || !result ? (
+            <BackendErrorCard onRetry={() => void refetch()} />
+          ) : (
             <>
               <DirectiveCard directive={result} />
               <SimulationMetrics result={result} />
