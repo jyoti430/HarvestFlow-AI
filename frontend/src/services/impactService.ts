@@ -1,11 +1,4 @@
-import { apiClient, USE_MOCK_DATA } from "./apiClient";
-import {
-  impactMetrics,
-  spoilageSeries,
-  revenueSeries,
-  storageSeries,
-  carbonSeries,
-} from "@/data";
+import { apiClient } from "./apiClient";
 import type { ImpactMetric, SeriesPoint } from "@/types";
 
 export interface ImpactOverview {
@@ -17,17 +10,8 @@ export interface ImpactOverview {
 }
 
 export const impactService = {
-  /** GET /impact/overview */
+  /** GET /api/v1/impact/overview */
   getOverview(): Promise<ImpactOverview> {
-    if (USE_MOCK_DATA) {
-      return Promise.resolve({
-        metrics: impactMetrics,
-        spoilage: spoilageSeries,
-        revenue: revenueSeries,
-        storage: storageSeries,
-        carbon: carbonSeries,
-      });
-    }
-    return apiClient.get<ImpactOverview>("/impact/overview");
+    return apiClient.get<ImpactOverview>("/api/v1/impact/overview");
   },
 };
