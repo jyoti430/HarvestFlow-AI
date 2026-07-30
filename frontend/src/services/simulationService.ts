@@ -1,15 +1,9 @@
-import { apiClient, USE_MOCK_DATA } from "./apiClient";
-import { runSimulation } from "@/utils/simulate";
+import { apiClient } from "./apiClient";
 import type { SimulationResult, SimulationScenario } from "@/types";
 
 export const simulationService = {
-  /** POST /simulation/run */
+  /** POST /api/v1/simulation/run */
   run(scenario: SimulationScenario): Promise<SimulationResult> {
-    if (USE_MOCK_DATA) {
-      return new Promise((resolve) =>
-        setTimeout(() => resolve(runSimulation(scenario)), 120)
-      );
-    }
-    return apiClient.post<SimulationResult, SimulationScenario>("/simulation/run", scenario);
+    return apiClient.post<SimulationResult, SimulationScenario>("/api/v1/simulation/run", scenario);
   },
 };
