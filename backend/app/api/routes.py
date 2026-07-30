@@ -7,14 +7,17 @@ from app.schemas.dashboard import DashboardOverviewResponse
 from app.schemas.impact import ImpactOverviewResponse
 from app.schemas.request import DecisionRequest
 from app.schemas.response import DecisionResponse, HealthResponse, ServiceResponse
+from app.schemas.simulation import SimulationRequest, SimulationResponse
 from app.services.dashboard_service import DashboardService
 from app.services.impact_service import ImpactService
+from app.services.simulation_service import SimulationService
 from app.services.weather_service import WeatherService
 
 router = APIRouter()
 weather_service = WeatherService()
 dashboard_service = DashboardService()
 impact_service = ImpactService()
+simulation_service = SimulationService()
 
 
 @router.get("/", response_model=ServiceResponse, tags=["System"])
@@ -49,6 +52,18 @@ def get_dashboard_overview() -> DashboardOverviewResponse:
 def get_impact_overview() -> ImpactOverviewResponse:
     """Return deterministic India-to-Singapore impact data for the MVP."""
     return impact_service.get_overview()
+
+
+@router.post(
+    "/api/v1/simulation/run",
+    response_model=SimulationResponse,
+    status_code=status.HTTP_200_OK,
+    tags=["Simulation"],
+    summary="Run an operational scenario simulation",
+)
+def run_simulation(scenario: SimulationRequest) -> SimulationResponse:
+    """Calculate a deterministic India-to-Singapore simulation directive."""
+    return simulation_service.run(scenario)
 
 
 @router.post(
