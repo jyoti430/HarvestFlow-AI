@@ -12,11 +12,18 @@ const statusTone: Record<TransportStatus, Tone> = {
 export function TransportCard({ items }: { items: TransportLeg[] }) {
   return (
     <SectionCard title="Transport Status" subtitle="Active reefer & dispatch fleet">
-      <div className="space-y-3">
-        {items.map((t) => (
-          <TransportRow key={t.id} leg={t} />
-        ))}
-      </div>
+      {items.length === 0 ? (
+        <div className="flex min-h-24 items-center justify-center gap-2 rounded-md border border-dashed px-3 py-6 text-sm text-muted-foreground">
+          <Truck className="h-4 w-4" />
+          <span>No active transport</span>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {items.map((t) => (
+            <TransportRow key={t.id} leg={t} />
+          ))}
+        </div>
+      )}
     </SectionCard>
   );
 }

@@ -12,7 +12,7 @@ const trendTone: Record<Trend, string> = {
 
 export function MarketCard({ items }: { items: MarketSignal[] }) {
   return (
-    <SectionCard title="Market Demand" subtitle="Real-time buyer signals">
+    <SectionCard title="Market Demand" subtitle="Export destination demand">
       <div className="space-y-3">
         {items.map((m) => (
           <MarketRow key={m.market} signal={m} />

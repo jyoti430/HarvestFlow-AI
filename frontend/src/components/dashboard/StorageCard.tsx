@@ -1,3 +1,4 @@
+import { Warehouse } from "lucide-react";
 import { SectionCard } from "@/components/common/SectionCard";
 import { ProgressBar } from "@/components/common/ProgressBar";
 import { capacityTone } from "@/utils/tones";
@@ -6,11 +7,18 @@ import type { StorageFacility } from "@/types";
 export function StorageCard({ items }: { items: StorageFacility[] }) {
   return (
     <SectionCard title="Cold Storage Utilization" subtitle="Live capacity across regional facilities">
-      <div className="space-y-4">
-        {items.map((s) => (
-          <StorageRow key={s.facility} facility={s} />
-        ))}
-      </div>
+      {items.length === 0 ? (
+        <div className="flex min-h-24 items-center justify-center gap-2 rounded-md border border-dashed px-3 py-6 text-sm text-muted-foreground">
+          <Warehouse className="h-4 w-4" />
+          <span>No cold storage available</span>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {items.map((s) => (
+            <StorageRow key={s.facility} facility={s} />
+          ))}
+        </div>
+      )}
     </SectionCard>
   );
 }
