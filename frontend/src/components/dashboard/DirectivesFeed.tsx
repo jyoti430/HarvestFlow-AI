@@ -19,12 +19,18 @@ export function DirectivesFeed({ items }: { items: Directive[] }) {
           <Sparkles className="h-3 w-3" /> AI live
         </span>
       }
-    >
-      <div className="divide-y">
-        {items.map((d) => (
-          <DirectiveRow key={d.id} directive={d} />
-        ))}
-      </div>
+      >
+      {items.length === 0 ? (
+        <p className="py-6 text-center text-sm text-muted-foreground">
+          No active directives for this region.
+        </p>
+      ) : (
+        <div className="divide-y">
+          {items.map((d) => (
+            <DirectiveRow key={d.id} directive={d} />
+          ))}
+        </div>
+      )}
     </SectionCard>
   );
 }

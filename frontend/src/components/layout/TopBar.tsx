@@ -1,10 +1,10 @@
-import { Cloud, MapPin } from "lucide-react";
+import { MapPin } from "lucide-react";
 import { useEffect, useState } from "react";
-
-const REGIONS = ["All Regions", "Nashik", "Pune", "Bengaluru", "Hyderabad"] as const;
+import { REGIONS, useRegion, type Region } from "@/contexts/RegionContext";
 
 export function TopBar() {
   const [now, setNow] = useState(() => new Date());
+  const { selectedRegion, setSelectedRegion } = useRegion();
   useEffect(() => {
     const t = setInterval(() => setNow(new Date()), 60_000);
     return () => clearInterval(t);
@@ -26,13 +26,13 @@ export function TopBar() {
           <span className="opacity-40">·</span>
           <span>{now.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })}</span>
         </div>
-        <div className="hidden sm:flex items-center gap-1.5 text-muted-foreground">
-          <Cloud className="h-3.5 w-3.5" />
-          <span>24°C · Partly cloudy</span>
-        </div>
         <div className="flex items-center gap-1.5 rounded-md border bg-background px-2.5 py-1.5">
           <MapPin className="h-3.5 w-3.5 text-primary" />
-          <select className="bg-transparent text-xs outline-none" defaultValue="All Regions">
+          <select
+            className="bg-transparent text-xs outline-none"
+            value={selectedRegion}
+            onChange={(event) => setSelectedRegion(event.target.value as Region)}
+          >
             {REGIONS.map((r) => (
               <option key={r}>{r}</option>
             ))}

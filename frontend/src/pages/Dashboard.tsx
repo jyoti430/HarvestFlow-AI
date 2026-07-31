@@ -9,9 +9,12 @@ import { DirectivesFeed } from "@/components/dashboard/DirectivesFeed";
 import { SupplyHealthChart } from "@/components/dashboard/SupplyHealthChart";
 import { BackendErrorCard } from "@/components/common/BackendErrorCard";
 import { useDashboardOverview } from "@/hooks/useHarvestFlow";
+import { useRegion } from "@/contexts/RegionContext";
+import { filterDirectives, filterStorage, filterTransport, filterWeather } from "@/utils/regionFilters";
 
 export function Dashboard() {
   const { data, isLoading, isError, refetch } = useDashboardOverview();
+  const { selectedRegion } = useRegion();
 
   return (
     <div className="space-y-8">
@@ -29,15 +32,15 @@ export function Dashboard() {
           <KpiGrid items={data.kpis} />
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <WeatherCard items={data.weather} />
-            <StorageCard items={data.storage} />
-            <TransportCard items={data.transport} />
+            <WeatherCard items={filterWeather(data.weather, selectedRegion)} />
+            <StorageCard items={filterStorage(data.storage, selectedRegion)} />
+            <TransportCard items={filterTransport(data.transport, selectedRegion)} />
             <MarketCard items={data.markets} />
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2">
-              <DirectivesFeed items={data.directives} />
+              <DirectivesFeed items={filterDirectives(data.directives, selectedRegion)} />
             </div>
             <SupplyHealthChart data={data.supplyHealth} />
           </div>
