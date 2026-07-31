@@ -5,6 +5,7 @@ import { DirectiveCard } from "@/components/decision/DirectiveCard";
 import { DecisionTimeline } from "@/components/decision/DecisionTimeline";
 import { BackendErrorCard } from "@/components/common/BackendErrorCard";
 import { Card } from "@/components/ui/card";
+import { useRegion } from "@/contexts/RegionContext";
 import type { DecisionInputs } from "@/types";
 import { decisionService } from "@/services";
 import type { OptimizeResponse } from "@/services/decisionService";
@@ -15,13 +16,22 @@ export function DecisionEngine() {
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [lastInputs, setLastInputs] = useState<DecisionInputs | null>(null);
+  const { selectedRegion } = useRegion();
 
   const handleOptimize = async (inputs: DecisionInputs) => {
     setIsLoading(true);
     setHasError(false);
     setLastInputs(inputs);
     try {
-      setData(await decisionService.optimize(inputs));
+      const regionAwareInputs =
+        selectedRegion === "All Regions"
+          ? inputs
+          : {
+              ...inputs,
+              origin: selectedRegion,
+            };
+
+      setData(await decisionService.optimize(regionAwareInputs));
     } catch {
       setData(null);
       setHasError(true);
@@ -34,7 +44,7 @@ export function DecisionEngine() {
     <div className="space-y-8">
       <PageHeader
         title="Decision Engine"
-        subtitle="Provide operational inputs. HarvestFlow AI computes the optimal end-to-end directive."
+        subtitle={`Provide operational inputs for ${selectedRegion}. HarvestFlow AI computes the optimal end-to-end directive.`}
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
