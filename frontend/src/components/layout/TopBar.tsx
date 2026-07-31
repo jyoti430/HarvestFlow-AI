@@ -1,8 +1,14 @@
-import { MapPin } from "lucide-react";
+import { MapPin, Menu } from "lucide-react";
 import { useEffect, useState } from "react";
 import { REGIONS, useRegion, type Region } from "@/contexts/RegionContext";
 
-export function TopBar() {
+export function TopBar({
+  collapsed,
+  onToggleSidebar,
+}: {
+  collapsed: boolean;
+  onToggleSidebar: () => void;
+}) {
   const [now, setNow] = useState(() => new Date());
   const { selectedRegion, setSelectedRegion } = useRegion();
   useEffect(() => {
@@ -13,6 +19,14 @@ export function TopBar() {
   return (
     <header className="h-16 border-b bg-card px-4 md:px-8 flex items-center justify-between">
       <div className="flex items-center gap-3 min-w-0">
+        <button
+          type="button"
+          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          onClick={onToggleSidebar}
+          className="flex h-9 w-9 items-center justify-center rounded-md border bg-background text-foreground transition-colors hover:bg-accent"
+        >
+          <Menu className="h-4 w-4" />
+        </button>
         <h1 className="text-base font-semibold tracking-tight truncate">HarvestFlow AI</h1>
         <span className="hidden lg:inline text-xs text-muted-foreground truncate">
           Decision Intelligence for Perishable Supply Chains
