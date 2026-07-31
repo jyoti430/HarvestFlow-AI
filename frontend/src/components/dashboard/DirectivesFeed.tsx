@@ -19,11 +19,12 @@ export function DirectivesFeed({ items }: { items: Directive[] }) {
           <Sparkles className="h-3 w-3" /> AI live
         </span>
       }
-      >
+    >
       {items.length === 0 ? (
-        <p className="py-6 text-center text-sm text-muted-foreground">
-          No active directives for this region.
-        </p>
+        <div className="flex min-h-24 items-center justify-center gap-2 rounded-md border border-dashed px-3 py-6 text-sm text-muted-foreground">
+          <Sparkles className="h-4 w-4" />
+          <span>No active AI directives</span>
+        </div>
       ) : (
         <div className="divide-y">
           {items.map((d) => (
